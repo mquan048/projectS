@@ -1,40 +1,38 @@
-# Hệ Thống Dịch Vụ In Thông Minh HCMUT - SSPS
+# HCMUT Smart Printing Service System - SSPS
 
-## Giới thiệu
+## Introduction
 
-Hệ Thống Dịch Vụ In Thông Minh HCMUT - SSPS là một ứng dụng web cho phép người dùng gửi yêu cầu in ấn trực tuyến và theo dõi trạng thái đơn hàng của mình. Hệ thống được phát triển dựa trên MERN stack
+The HCMUT Smart Printing Service System - SSPS is a web application that allows users to submit print requests online and track the status of their orders. The system is developed based on the MERN stack.
 
-## Tính năng
+## Features
 
-- Đăng nhập và đăng xuất người dùng
-- Đăng tải và in tài liệu
-- Theo dõi trạng thái in
-- Quản lý thông tin cá nhân và lịch sử in ấn
-- Phản hồi về dịch vụ
+- User login and logout
+- Upload and print documents
+- Track printing status
+- Manage personal information and print history
+- Provide feedback on services
 
-- Quản lý lịch sử in và máy in cho quản trị viên
-- Tạo báo cáo doanh số và cấu hình hệ thống
+- Manage print history and printers for administrators
+- Generate sales reports and configure the system
 
-- Theo dõi và cập nhật trạng thái đơn hàng cho kỹ thuật viên
+- Track and update order status for technicians
 
-- Thanh toán số trang in qua BKPay
-- Xác thực đăng nhập qua HCMUT_SSO
+- Pay for printed pages via BKPay
+- Authenticate login via HCMUT_SSO
 
-## Công nghệ sử dụng
+## Technologies Used
 
-- **MongoDB**: Cơ sở dữ liệu NoSQL để lưu trữ thông tin người dùng và đơn hàng
-- **Express.js**: Framework cho Node.js để xây dựng API
-- **React.js**: Thư viện JavaScript để xây dựng giao diện người dùng
-- **Node.js**: Môi trường chạy JavaScript phía server
+- **MongoDB**: A NoSQL database to store user and order information
+- **Express.js**: A Node.js framework for building APIs
+- **React.js**: A JavaScript library for building user interfaces
+- **Node.js**: A server-side JavaScript runtime environment
 
-## Cài đặt
+## Installation
 
-### Yêu cầu
+### Requirements
 
 - Node.js
 - MongoDB
 
-### Hướng dẫn cài đặt
-
-
+### Installation Guide
 
