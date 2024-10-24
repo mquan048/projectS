@@ -12,30 +12,37 @@ export default [
             sourceType: 'module',
             globals: {
                 ...globals.node,
-                ...globals.browser,
+                ...globals.browser
             },
             parserOptions: {
                 ecmaFeatures: {
-                    jsx: true,
-                },
-            },
+                    jsx: true
+                }
+            }
         },
         plugins: {
             react,
-            prettier,
+            prettier
         },
         settings: {
             react: {
-                version: 'detect',
-            },
+                version: 'detect'
+            }
         },
         rules: {
-            'prettier/prettier': 'error',
+            'linebreak-style': 'off',
             'react/react-in-jsx-scope': 'off',
             'react/prop-types': 'off',
             'no-unused-vars': 'warn',
-            'no-console': 'off', // Tắt warning về console
+            'no-console': 'off',
             'no-undef': 'error',
-        },
-    },
+            indent: ['error', 4],
+            quotes: ['error', 'single'],
+            semi: ['error', 'always'],
+            'comma-dangle': ['off'],
+            'no-useless-escape': 'off',
+            'brace-style': ['off'],
+            'prettier/prettier': ['off']
+        }
+    }
 ];
