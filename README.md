@@ -6,33 +6,32 @@ The HCMUT Smart Printing Service System - SSPS is a web application that allows 
 
 ## Features
 
-- User login and logout
-- Upload and print documents
-- Track printing status
-- Manage personal information and print history
-- Provide feedback on services
+-   User login and logout
+-   Upload and print documents
+-   Track printing status
+-   Manage personal information and print history
+-   Provide feedback on services
 
-- Manage print history and printers for administrators
-- Generate sales reports and configure the system
+-   Manage print history and printers for administrators
+-   Generate sales reports and configure the system
 
-- Track and update order status for technicians
+-   Track and update order status for technicians
 
-- Pay for printed pages via BKPay
-- Authenticate login via HCMUT_SSO
+-   Pay for printed pages via BKPay
+-   Authenticate login via HCMUT_SSO
 
 ## Technologies Used
 
-- **MongoDB**: A NoSQL database to store user and order information
-- **Express.js**: A Node.js framework for building APIs
-- **React.js**: A JavaScript library for building user interfaces
-- **Node.js**: A server-side JavaScript runtime environment
+-   **MongoDB**: A NoSQL database to store user and order information
+-   **Express.js**: A Node.js framework for building APIs
+-   **React.js**: A JavaScript library for building user interfaces
+-   **Node.js**: A server-side JavaScript runtime environment
 
 ## Installation
 
 ### Requirements
 
-- Node.js
-- MongoDB
+-   Node.js
+-   MongoDB
 
 ### Installation Guide
-

@@ -6,7 +6,11 @@
     "scripts": {
         "backend": "nodemon backend/index.js",
         "frontend": "npm run dev --prefix frontend",
-        "dev": "concurrently \"npm run backend\" \"npm run frontend\""
+        "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+        "prepare": "husky install",
+        "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+        "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+        "lint:fix": "eslint . --fix"
     },
     "keywords": [],
     "author": "",
@@ -28,5 +32,25 @@
         "morgan": "^1.10.0",
         "multer": "^1.4.5-lts.1",
         "nodemon": "^3.1.7"
+    },
+    "devDependencies": {
+        "@eslint/js": "^8.56.0",
+        "eslint": "^8.56.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-prettier": "^5.2.1",
+        "eslint-plugin-react": "^7.33.2",
+        "globals": "^13.24.0",
+        "husky": "^8.0.0",
+        "lint-staged": "^15.2.0",
+        "prettier": "^3.2.5"
+    },
+    "lint-staged": {
+        "*.{js,jsx,ts,tsx}": [
+            "eslint --fix",
+            "prettier --write"
+        ],
+        "*.{json,md}": [
+            "prettier --write"
+        ]
     }
 }
