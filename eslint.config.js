@@ -37,7 +37,7 @@ export default [
             'no-console': 'off',
             'no-undef': 'error',
             indent: ['error', 4],
-            quotes: ['error', 'single'],
+            quotes: ['off'],
             semi: ['error', 'always'],
             'comma-dangle': ['off'],
             'no-useless-escape': 'off',
