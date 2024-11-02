@@ -6,7 +6,6 @@
     "scripts": {
         "start": "node index.js",
         "dev": "nodemon index.js",
-        "prepare": "husky install",
         "format": "prettier --write \"**/*.{js,json,md}\"",
         "lint": "eslint . --ext js --report-unused-disable-directives --max-warnings 0",
         "lint:fix": "eslint . --fix"
