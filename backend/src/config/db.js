@@ -7,7 +7,7 @@ const { Pool } = pg;
 
 const dbConfig = {
     user: process.env.DB_USER,
-    host: process.env.DB_HOST,
+    host: process.env.DB_HOST || 'localhost',
     database: process.env.DB_NAME,
     password: process.env.DB_PASSWORD,
     port: parseInt(process.env.DB_PORT || '5432'),
@@ -15,9 +15,6 @@ const dbConfig = {
     max: parseInt(process.env.DB_POOL_SIZE || '20'),
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
-    ssl: process.env.NODE_ENV === 'production' ? {
-        rejectUnauthorized: false
-    } : false
 };
 
 const pool = new Pool(dbConfig);
@@ -64,7 +61,6 @@ const query = async (text, params) => {
         throw error;
     }
 };
-
 
 const transaction = async (callback) => {
     const client = await pool.connect();
