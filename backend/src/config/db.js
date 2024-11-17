@@ -6,10 +6,10 @@ config();
 const { Pool } = pg;
 
 const dbConfig = {
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST || 'localhost',
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
+    user: process.env.POSTGRES_USER,
+    host: process.env.POSTGRES_HOST || 'localhost',
+    database: process.env.POSTGRES_DB,
+    password: process.env.POSTGRES_PASSWORD,
     port: parseInt(process.env.DB_PORT || '5432'),
 
     max: parseInt(process.env.DB_POOL_SIZE || '20'),
