@@ -3,7 +3,9 @@ CREATE TABLE documents (
     id SERIAL PRIMARY KEY,
     document_id VARCHAR(255) UNIQUE NOT NULL,
     name VARCHAR(255) NOT NULL,
-    file_type VARCHAR(10) NOT NULL CHECK (file_type IN ('pdf', 'doc', 'docx')),
+    file_type VARCHAR(10) NOT NULL CHECK (
+        file_type IN ('pdf', 'doc', 'docx')
+    ),
     number_of_pages INTEGER NOT NULL CHECK (number_of_pages >= 1),
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
