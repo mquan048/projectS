@@ -4,7 +4,7 @@ import * as printOrderService from "../services/printOrder.service.js"
 export const addPrintOrder = async (req, res) => {
     try {
         const dataForm = req.body;
-        await printOrderService.addPrintOrder(dataForm);
+        await printOrderService.addPrintOrder(req.id, dataForm);
         return res.status(201).json({ message: 'add print order successfully!' });
     } catch (error) {
         console.error(error);
@@ -14,7 +14,7 @@ export const addPrintOrder = async (req, res) => {
 
 export const getAllPrintOrders = async (req, res) => {
     try {
-        const printOrders = await printOrderService.getAllPrintOrders();
+        const printOrders = await printOrderService.getAllPrintOrders(req.query.page);
         return res.status(200).json(printOrders);
     } catch (error) {
         console.error(error);
@@ -32,9 +32,9 @@ export const getPrintOrderById = async (req, res) => {
     }
 };
 
-export const getPrintOrderByUserid = async (req, res) => {
+export const getPrintOrdersByUserid = async (req, res) => {
     try {
-        const printOrders = await printOrderService.getPrintOrderByUserid(req.query.user_id);
+        const printOrders = await printOrderService.getPrintOrdersByUserid(req.id, req.query.page);
         return res.status(200).json(printOrders);
     } catch (error) {
         console.error(error);

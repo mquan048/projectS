@@ -12,7 +12,7 @@ export const getNotify = async (req, res) => {
 
 export const viewNotify = async (req, res) => {
     try {
-        const result = await notificationService.viewNotify(req.body.id, req.id)
+        const result = await notificationService.viewNotify(req.params.id, req.id)
         if(result) {
             return res.status(200).json({
                 message: "OK!"
@@ -42,7 +42,7 @@ export const viewAll = async (req, res) => {
 
 export const deleteNotify = async (req, res) => {
     try {
-        const result = await notificationService.deleteNotify(req.body.id, req.id)
+        const result = await notificationService.deleteNotify(req.params.id, req.id)
         if (result) {
             return res.status(200).json({
                 message: "OK!"

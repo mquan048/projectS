@@ -1,4 +1,3 @@
-
 import { query } from "../config/db.js";
 
 export const addFeedback = async ({ user_id, title, content, rating }) => {

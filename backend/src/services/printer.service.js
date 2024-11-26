@@ -53,3 +53,12 @@ export const updateInfo = async (id, {name, brand, model, campus, room, building
         throw error
     }
 }
+
+export const deletePrinter = async(id) => {
+    try{
+        const result = await query('DELETE FROM printers WHERE printer_id = $1', [id])
+        return result.rowCount !== 0;
+    } catch (error) {
+        throw error;
+    }
+}

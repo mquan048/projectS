@@ -4,10 +4,11 @@ import * as printerController  from '../controllers/printer.controller.js';
 
 const route = Router()
 
-route.post('/add', authMiddleware.spsoPermission, printerController.addPrinter)
-route.get('/get-all', printerController.getAllPrinters)
-route.get('/get/:id', printerController.getPrinter)
+route.get('/', printerController.getAllPrinters)
+route.get('/:id', printerController.getPrinter)
+route.post('/', authMiddleware.spsoPermission, printerController.addPrinter)
 route.put('/change-state/:id', authMiddleware.spsoPermission, printerController.changeState)
 route.put('/update/:id', authMiddleware.spsoPermission, printerController.updateInfo)
+route.delete('/:id', authMiddleware.spsoPermission, printerController.deletePrinter)
 
 export default route;

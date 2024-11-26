@@ -3,7 +3,7 @@ import { query } from "../config/db.js"
 
 export const getNotify = async (user_id) => {
     try {
-        const result = await query("SELECT * FROM notifications WHERE user_id = $1" [user_id])
+        const result = await query("SELECT * FROM notifications WHERE user_id = $1 ORDER BY created_at DESC LIMIT 5" [user_id])
         return result.rows;
     } catch (error) {
         throw error;
@@ -36,7 +36,7 @@ export const deleteNotify = async (notification_id, user_id) => {
             'DELETE FROM notifications WHERE notify_id = $1 AND user_id = $2', 
             [notification_id, user_id]
         )
-        return result;
+        return result.rowCount !== 0;
     } catch (error) {
         throw error;
     }
