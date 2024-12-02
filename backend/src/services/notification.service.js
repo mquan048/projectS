@@ -13,7 +13,7 @@ export const getNotify = async (user_id) => {
 export const viewNotify = async (notification_id, user_id) => {
     try {
         const result = await query(
-            "UPDATE notifications SET status = 'read' WHERE notification_id =  $1 AND user_id = $2", 
+            "UPDATE notifications SET status = 'read' WHERE notification_id =  $1 AND user_id = $2",
             [notification_id, user_id]
         )
         return result.rowCount !== 0
@@ -33,7 +33,7 @@ export const viewAll = async (user_id) => {
 export const deleteNotify = async (notification_id, user_id) => {
     try {
         const result = await query(
-            'DELETE FROM notifications WHERE notify_id = $1 AND user_id = $2', 
+            'DELETE FROM notifications WHERE notify_id = $1 AND user_id = $2',
             [notification_id, user_id]
         )
         return result.rowCount !== 0;

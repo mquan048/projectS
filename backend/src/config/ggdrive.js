@@ -52,6 +52,6 @@ export const getUrl = async (document_id) => {
 
 export const remove = async (document_id) => {
     await drive.files.delete({
-        filedId: document_id,
+        fileId: document_id,
     })
 }

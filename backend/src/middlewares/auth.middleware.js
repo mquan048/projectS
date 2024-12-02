@@ -5,7 +5,7 @@ import * as userService from '../services/user.service.js';
 
 config()
 
-export const spsoPermission = async (req, res) => {
+export const spsoPermission = async (req, res, next) => {
     try {
         const token = req.headers.authorization?.split(' ')[1];
         if (!token) {

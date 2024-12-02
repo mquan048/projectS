@@ -31,12 +31,17 @@ export const addDocument = async (file, user_id) => {
 
 export const getDocumentByUserId = async (user_id) => {
     try {
-        const result = await query("SELECT document_id, name, file_type, number_of_pages FROM documents WHERE user_id = $1", [user_id]);
+        const result = await query("SELECT id, document_id, name, file_type, number_of_pages FROM documents WHERE user_id = $1", [user_id]);
         const documents = result.rows;
-        for (doc in documents) {
-            const url = await drive.getUrl(doc.document_id);
-            doc.webViewLink = url.webViewLink;
-            doc.webContentLink = url.webContentLink;
+        for (const doc of documents) {
+            try {
+                const url = await drive.getUrl(doc.document_id);
+                doc.webViewLink = url.webViewLink;
+                doc.webContentLink = url.webContentLink;
+            } catch (err) {
+                doc.webViewLink = null;
+                doc.webContentLink = null;
+            }
         }
         return documents
     } catch (error) {
@@ -46,8 +51,8 @@ export const getDocumentByUserId = async (user_id) => {
 
 export const getDocumentById = async (document_id) => {
     try {
-        const result = await query("SELECT document_id, name, file_type, number_of_pages FROM documents WHERE document_id = $1", [document_id]);
-        return result.rows;
+        const result = await query("SELECT id, document_id, name, file_type, number_of_pages FROM documents WHERE document_id = $1", [document_id]);
+        return result.rows[0];
     } catch (error) {
         throw error;
     }
@@ -55,7 +60,7 @@ export const getDocumentById = async (document_id) => {
 
 export const deleteDocument = async (document_id, user_id) => {
     try {
-        const result = await query("DELETE FROM documents WHERE document_id = $1 AND user_id", [document_id, user_id]);
+        const result = await query("DELETE FROM documents WHERE document_id = $1 AND user_id = $2", [document_id, user_id]);
         if (result.rowCount !== 0) {
             await drive.remove(document_id);
         }

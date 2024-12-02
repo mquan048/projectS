@@ -1,11 +1,22 @@
-
 import * as printOrderService from "../services/printOrder.service.js"
+import * as documentService from "../services/document.service.js"
+import * as userService from "../services/user.service.js"
 
 export const addPrintOrder = async (req, res) => {
     try {
         const dataForm = req.body;
-        await printOrderService.addPrintOrder(req.id, dataForm);
-        return res.status(201).json({ message: 'add print order successfully!' });
+
+        const document = await documentService.getDocumentById(dataForm.document_id);
+        const pageNeedToPrint = printOrderService.calcPages(document.number_of_pages, dataForm);
+        
+        const user = await userService.findUserById(req.id);
+        if(user.available_a4_pages < pageNeedToPrint) {
+            return res.status(400).json({message: 'User do not have enough pages to print!'})
+        }
+
+        await printOrderService.addPrintOrder(req.id, document.id, dataForm);
+        await userService.descAvailabePage(req.id, pageNeedToPrint);
+        return res.status(201).json({ message: 'Add print order successfully!' });
     } catch (error) {
         console.error(error);
         return res.status(500);
@@ -34,7 +45,7 @@ export const getPrintOrderById = async (req, res) => {
 
 export const getPrintOrdersByUserid = async (req, res) => {
     try {
-        const printOrders = await printOrderService.getPrintOrdersByUserid(req.id, req.query.page);
+        const printOrders = await printOrderService.getPrintOrdersByUserid(req.id, req.query.page, req.query.status);
         return res.status(200).json(printOrders);
     } catch (error) {
         console.error(error);

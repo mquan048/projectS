@@ -1,0 +1,681 @@
+openapi: 3.0.0
+info:
+  title: SPSS API
+  version: 1.0.0
+servers:
+  - url: localhost://
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+tags:
+  - name: Authen
+  - name: Notification
+  - name: Printer
+  - name: Document
+  - name: Page Order
+  - name: Printer Order
+  - name: User
+  - name: SPSO
+  - name: Report
+paths:
+  /api/auth/signup/user:
+    post:
+      tags:
+        - Authen
+      summary: Create normal user
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                role:
+                  type: string
+                  example: USER
+                full_name:
+                  type: string
+                  example: Nguyen Van A
+                email:
+                  type: string
+                  example: user1@abc.xyz
+                password:
+                  type: string
+                  example: "123456"
+                date_of_birth:
+                  type: string
+                  example: "2004-01-01"
+                available_a4_pages:
+                  type: integer
+                  example: 10
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+
+  /api/auth/signup/spso:
+    post:
+      tags:
+        - Authen
+      summary: Create SPSO account
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                role:
+                  type: string
+                  example: SPSO
+                username:
+                  type: string
+                  example: admin2
+                email:
+                  type: string
+                  example: admin2@abc.xyz
+                password:
+                  type: string
+                  example: "123456"
+                full_name:
+                  type: string
+                  example: Nguyen Van B
+                phone_number:
+                  type: string
+                  example: 090xxxxxxx
+                date_of_birth:
+                  type: string
+                  example: "1999-01-01"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/auth/signin:
+    post:
+      tags:
+        - Authen
+      summary: Sign in
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                email:
+                  type: string
+                  example: user1@abc.xyz
+                password:
+                  type: integer
+                  example: "123456"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/auth/authorize:
+    get:
+      tags:
+        - Authen
+      summary: Authorize
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/notification:
+    get:
+      tags:
+        - Notification
+      summary: Get nofify
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Notification
+      summary: Action view all
+      requestBody:
+        content: {}
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Notification
+      summary: Delete all
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}        
+  /api/notification/{id}:
+    put:
+      tags:
+        - Notification
+      summary: Action view
+      requestBody:
+        content: {}
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: "1"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Notification
+      summary: Delete
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: "1"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/printer:
+    get:
+      tags:
+        - Printer
+      summary: Get all
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - Printer
+      summary: Add
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                name:
+                  type: string
+                  example: Máy in phun màu Epson L1210
+                brand:
+                  type: string
+                  example: EPSON
+                model:
+                  type: string
+                  example: L1210
+                campus:
+                  type: string
+                  example: CS2
+                building:
+                  type: string
+                  example: H6
+                room:
+                  type: integer
+                  example: "106"
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/printer/{id}:
+    get:
+      tags:
+        - Printer
+      summary: Get info detail
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: "1"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/printer/change-state/{id}:
+    put:
+      tags:
+        - Printer
+      summary: Change state
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                state:
+                  type: string
+                  example: inactive
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: "1"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/printer/update/{id}:
+    put:
+      tags:
+        - Printer
+      summary: Update
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                name:
+                  type: string
+                  example: Máy in phun màu Epson L1210
+                brand:
+                  type: string
+                  example: EPSON
+                model:
+                  type: string
+                  example: L1210
+                campus:
+                  type: string
+                  example: CS2
+                room:
+                  type: string
+                  example: H6
+                building:
+                  type: integer
+                  example: "106"
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: "1"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/document:
+    get:
+      tags:
+        - Document
+      summary: get all by user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - Document
+      summary: upload
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/document/{id}:
+    get:
+      tags:
+        - Document
+      summary: get detail
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+          example: "1"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Document
+      summary: delete
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+          example: "1"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/page-order/get-all:
+    get:
+      tags:
+        - Page Order
+      summary: get all page order (only spso)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+          example: "1"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/page-order/{id}:
+    get:
+      tags:
+        - Page Order
+      summary: get by id
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: "1"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Page Order
+      summary: change state
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                o_state:
+                  type: string
+                  example: failed
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: "1"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/page-order:
+    get:
+      tags:
+        - Page Order
+      summary: get by user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+          example: "1"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - Page Order
+      summary: add page order
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                number_of_a4_pages:
+                  type: integer
+                  example: "50"
+                o_state:
+                  type: string
+                  example: completed
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/print-order/get-all:
+    get:
+      tags:
+        - Printer Order
+      summary: get all
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+          example: "1"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/print-order:
+    post:
+      tags:
+        - Printer Order
+      summary: add print order
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                document_id: doc2
+                printer_id: 1
+                sided: two-sided
+                paper_size: A4
+                paper_orientation: portrait
+                pages_per_sheet: 1
+                number_of_copies: 1
+                scale: 1
+                p_state: printing
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - Printer Order
+      summary: get by user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+          example: "1"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/print-order/{id}:
+    get:
+      tags:
+        - Printer Order
+      summary: get by id
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: "4"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Printer Order
+      summary: delete by id
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: "4"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Printer Order
+      summary: change state
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                p_state:
+                  type: string
+                  example: completed
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: "2"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/print-order/filter:
+    get:
+      tags:
+        - Printer Order
+      summary: filter
+      parameters:
+        - name: begin_at
+          in: query
+          schema:
+            type: string
+          example: "2024-11-18T10:02:00"
+        - name: end_at
+          in: query
+          schema:
+            type: string
+          example: "2024-11-18T10:10:00"
+        - name: page
+          in: query
+          schema:
+            type: integer
+          example: "1"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/user:
+    get:
+      tags:
+        - User
+      summary: get info
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/spso:
+    get:
+      tags:
+        - SPSO
+      summary: get info
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/report/month:
+    get:
+      tags:
+        - Report
+      summary: get num order in month
+      parameters:
+        - name: year
+          in: query
+          schema:
+            type: integer
+          example: "2024"
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}

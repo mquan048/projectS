@@ -1,12 +1,14 @@
 
 import * as pageOrderService from "../services/pageOrder.service.js"
+import * as userService from "../services/user.service.js"
 
 export const addPageOrder = async (req, res) => {
     try {
         req.body.price = req.body.number_of_a4_pages * 500;
         const dataForm = req.body
         await pageOrderService.addPageOrder(req.id, dataForm);
-        return res.status(201).json();
+        await userService.incrAvailabePage(req.id, req.body.number_of_a4_pages)
+        return res.status(201).json({message: "OK!"});
     } catch (error) {
         console.error(error);
         return res.status(500);
