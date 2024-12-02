@@ -108,12 +108,17 @@ const createDocument = (userId) => {
   const subject = faker.helpers.arrayElement(SUBJECTS);
   const semester = faker.helpers.arrayElement(SEMESTERS);
   const name = `${documentType} ${subject} ${semester}`;
+  const number_of_pages = faker.number.int({ min: 1, max: 100 });
+  const minSize = number_of_pages * 50 * 1024;
+  const maxSize = number_of_pages * 200 * 1024;
+  const fileSize = faker.number.int({ min: minSize, max: maxSize });
   return {
 
     document_id: faker.string.uuid(),
     name,
     file_type: faker.helpers.arrayElement(FILE_TYPES),
-    number_of_pages: faker.number.int({ min: 1, max: 100 }),
+    number_of_pages: number_of_pages,
+    file_size: fileSize,
     user_id: userId,
     created_at: faker.date.past(),
     updated_at: faker.date.recent()
