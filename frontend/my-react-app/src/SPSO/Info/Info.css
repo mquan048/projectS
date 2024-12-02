@@ -1,0 +1,125 @@
+/* Parent container */
+.parent-info-container {
+  width: 100%;
+  /* height: calc(100vh - 100px); */
+  padding: 20px;
+  background-color: #f8f9fa; /* Light background to match navbar theme */
+  overflow-y: auto; /* Allows scrolling if content overflows */
+}
+
+/* Info Container */
+.info-container {
+  font-family: "Roboto", sans-serif;
+  margin: auto;
+  max-width: 1200px;
+  padding: 20px;
+  background-color: #ffffff; /* White background for contrast */
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for elevation */
+}
+
+/* Header Section */
+.info-header {
+  display: flex;
+  flex-wrap: wrap; /* Ensures responsiveness */
+  gap: 40px;
+  margin-bottom: 50px;
+}
+
+/* Avatar Section */
+.info-avatar {
+  flex-shrink: 0;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background-image: url(../../../../src/assets/boy.png); /* Replace with correct path */
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  /* border: 4px solid #999c9f;  */
+  margin: auto;
+  /* box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);  */
+}
+
+/* Details Section */
+.info-details {
+  flex: 1;
+}
+
+.info-details h1 {
+  color: #004080; /* Matches navbar color */
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.info-role {
+  color: #e74c3c; /* Subtle contrast with primary color */
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.info-description {
+  line-height: 1.8;
+  color: #333; /* Improved readability */
+  margin-bottom: 20px;
+}
+
+.info-description .highlight {
+  color: #004080; /* Highlight text */
+  font-weight: bold;
+}
+
+/* Personal Info Section */
+.info-personal {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  /* gap: 20px; */
+  padding-right: 15%;
+}
+
+.info-personal p {
+  margin: 5px 0;
+  color: #555; /* Neutral text */
+}
+
+.info-personal .olala {
+  color: #004080; /* Primary text color for labels */
+  font-weight: 600;
+}
+
+/* Statistics Section */
+.info-stats {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Light shadow */
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.info-stats div {
+  text-align: center;
+}
+
+.info-stats h2 {
+  color: #004080; /* Matches primary navbar color */
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.info-stats p {
+  color: #666; /* Neutral text for captions */
+  font-size: 14px;
+}
+
+.info-stats:hover {
+  cursor: pointer;
+  background-color: #e3f2fd; /* Subtle hover background */
+  transform: scale(1.05); /* Slight scaling on hover */
+}
