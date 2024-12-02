@@ -1,4 +1,3 @@
-// src/services/spaces.service.js
 import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
 import { PDFDocument } from 'pdf-lib';
 import { query } from "../config/db.js";
@@ -9,26 +8,24 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 config();
 
-// Constants
 const SPACES_CONFIG = {
-    MAX_FILE_SIZE: 5 * 1024 * 1024, // 5MB
-    ALLOWED_FILE_TYPES: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
-    FILE_RETENTION_DAYS: 30,
-    COMPRESSION_THRESHOLD: 1 * 1024 * 1024, // 1MB
-    SIGNED_URL_EXPIRES: 3600 // 1 hour
+  MAX_FILE_SIZE: 5 * 1024 * 1024,
+  ALLOWED_FILE_TYPES: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+  FILE_RETENTION_DAYS: 30,
+  COMPRESSION_THRESHOLD: 1 * 1024 * 1024,
+  SIGNED_URL_EXPIRES: 3600
 };
 
 // S3 Client Configuration
 const s3Client = new S3Client({
-    endpoint: `https://${process.env.SPACES_ENDPOINT}`,
-    region: process.env.SPACE_REGION,
-    credentials: {
-        accessKeyId: process.env.SPACES_KEY,
-        secretAccessKey: process.env.SPACES_SECRET
-    }
+  endpoint: `https://${process.env.SPACES_ENDPOINT}`,
+  region: process.env.SPACES_REGION,
+  credentials: {
+    accessKeyId: process.env.SPACES_KEY,
+    secretAccessKey: process.env.SPACES_SECRET
+  }
 });
 
-// Load file types configuration
 const file_type = JSON.parse(fs.readFileSync('./src/config/file_type.json', 'utf-8'));
 
 /**
@@ -37,10 +34,9 @@ const file_type = JSON.parse(fs.readFileSync('./src/config/file_type.json', 'utf
  * @returns {string} Unique filename
  */
 const generateUniqueFileName = (originalName) => {
-    const timestamp = Date.now();
-    const randomString = Math.random().toString(36).substring(2, 15);
-    const extension = originalName.split('.').pop();
-    return `${timestamp}-${randomString}.${extension}`;
+  const timestamp = Date.now();
+  const randomString = Math.random().toString(36).substring(2, 15);
+  return `${timestamp}-${randomString}`;
 };
 
 /**
@@ -50,24 +46,23 @@ const generateUniqueFileName = (originalName) => {
  * @returns {Promise<Buffer>} Compressed file buffer
  */
 const compressFileIfNeeded = async (fileBuffer, mimeType) => {
-    if (fileBuffer.length <= SPACES_CONFIG.COMPRESSION_THRESHOLD) {
-        return fileBuffer;
-    }
+  if (fileBuffer.length <= SPACES_CONFIG.COMPRESSION_THRESHOLD) {
+    return fileBuffer;
+  }
 
-    try {
-        if (mimeType === 'application/pdf') {
-            const pdfDoc = await PDFDocument.load(fileBuffer);
-            return await pdfDoc.save({
-                useObjectStreams: true,
-                compress: true
-            });
-        }
-        // Add more compression logic for other file types if needed
-        return fileBuffer;
-    } catch (error) {
-        console.error('Compression error:', error);
-        return fileBuffer;
+  try {
+    if (mimeType === 'application/pdf') {
+      const pdfDoc = await PDFDocument.load(fileBuffer);
+      return await pdfDoc.save({
+        useObjectStreams: true,
+        compress: true
+      });
     }
+    return fileBuffer;
+  } catch (error) {
+    console.error('Compression error:', error);
+    return fileBuffer;
+  }
 };
 
 /**
@@ -77,134 +72,121 @@ const compressFileIfNeeded = async (fileBuffer, mimeType) => {
  * @returns {Promise<Object>} Upload result
  */
 export const uploadFile = async (file, user_id) => {
-    let tempFilePath = null;
+  let tempFilePath = null;
 
-    try {
-        // Validate file size
-        if (file.size > SPACES_CONFIG.MAX_FILE_SIZE) {
-            throw new Error('File size exceeds limit');
-        }
-
-        // Validate file type
-        if (!SPACES_CONFIG.ALLOWED_FILE_TYPES.includes(file.mimetype)) {
-            throw new Error('File type not allowed');
-        }
-
-        // Generate unique filename
-        const uniqueFileName = generateUniqueFileName(file.originalname);
-
-        // Read and compress file
-        let fileBuffer = fs.readFileSync(file.path);
-        fileBuffer = await compressFileIfNeeded(fileBuffer, file.mimetype);
-
-        // Upload to Spaces
-        const uploadParams = {
-            Bucket: process.env.SPACE_NAME,
-            Key: uniqueFileName,
-            Body: fileBuffer,
-            ContentType: file.mimetype,
-            ACL: 'private', // Make file private by default
-            Metadata: {
-                'original-name': file.originalname,
-                'upload-date': new Date().toISOString(),
-                'user-id': user_id.toString(),
-                'file-size': file.size.toString()
-            }
-        };
-
-        await s3Client.send(new PutObjectCommand(uploadParams));
-
-        // Count pages for PDF
-        let numPages = 1;
-        if (file_type[file.mimetype] === 'pdf') {
-            const pdfDoc = await PDFDocument.load(fileBuffer);
-            numPages = pdfDoc.getPageCount();
-        }
-
-        // Generate signed URL for temporary access
-        const getObjectParams = {
-            Bucket: process.env.SPACE_NAME,
-            Key: uniqueFileName
-        };
-        const signedUrl = await getSignedUrl(
-            s3Client,
-            new GetObjectCommand(getObjectParams),
-            { expiresIn: SPACES_CONFIG.SIGNED_URL_EXPIRES }
-        );
-
-        // Save to database
-        const result = await query(
-            `INSERT INTO documents
-            (document_id, name, file_type, number_of_pages, user_id, file_size, status)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
-            RETURNING *`,
-            [
-                uniqueFileName,
-                file.originalname,
-                file_type[file.mimetype],
-                numPages,
-                user_id,
-                file.size,
-                'active'
-            ]
-        );
-
-        return {
-            success: true,
-            document: result.rows[0],
-            signedUrl,
-            expiresIn: SPACES_CONFIG.SIGNED_URL_EXPIRES
-        };
-
-    } catch (error) {
-        console.error('Upload error:', error);
-        throw error;
-    } finally {
-        // Clean up temporary file
-        if (file.path && fs.existsSync(file.path)) {
-            fs.unlinkSync(file.path);
-        }
+  try {
+    if (file.size > SPACES_CONFIG.MAX_FILE_SIZE) {
+      throw new Error('File size exceeds limit');
     }
+
+    if (!SPACES_CONFIG.ALLOWED_FILE_TYPES.includes(file.mimetype)) {
+      throw new Error('File type not allowed');
+    }
+
+    const uniqueFileName = generateUniqueFileName(file.originalname);
+
+    let fileBuffer = fs.readFileSync(file.path);
+    fileBuffer = await compressFileIfNeeded(fileBuffer, file.mimetype);
+
+    const uploadParams = {
+      Bucket: process.env.SPACES_NAME,
+      Key: uniqueFileName,
+      Body: fileBuffer,
+      ContentType: file.mimetype,
+      ACL: 'private',
+      Metadata: {
+        'original-name': file.originalname,
+        'upload-date': new Date().toISOString(),
+        'user-id': user_id.toString(),
+        'file-size': file.size.toString()
+      }
+    };
+
+    await s3Client.send(new PutObjectCommand(uploadParams));
+
+    let numPages = 1;
+    if (file_type[file.mimetype] === 'pdf') {
+      const pdfDoc = await PDFDocument.load(fileBuffer);
+      numPages = pdfDoc.getPageCount();
+    }
+
+    const getObjectParams = {
+      Bucket: process.env.SPACES_NAME,
+      Key: uniqueFileName
+    };
+    const signedUrl = await getSignedUrl(
+      s3Client,
+      new GetObjectCommand(getObjectParams),
+      { expiresIn: SPACES_CONFIG.SIGNED_URL_EXPIRES }
+    );
+
+    const result = await query(
+      `INSERT INTO documents
+          (document_id, name, file_type, number_of_pages, user_id, file_size)
+          VALUES ($1, $2, $3, $4, $5, $6)
+          RETURNING *`,
+      [
+        uniqueFileName,
+        file.originalname,
+        file_type[file.mimetype],
+        numPages,
+        user_id,
+        file.size
+      ]
+    );
+
+    return {
+      success: true,
+      document: result.rows[0],
+      signedUrl,
+      expiresIn: SPACES_CONFIG.SIGNED_URL_EXPIRES
+    };
+
+  } catch (error) {
+    console.error('Upload error:', error);
+    throw error;
+  } finally {
+    if (file.path && fs.existsSync(file.path)) {
+      fs.unlinkSync(file.path);
+    }
+  }
 };
 
 /**
  * Delete file from Spaces
  * @param {string} document_id - Document ID
- * @param {string} user_id - User ID
  * @returns {Promise<boolean>} Delete result
  */
-export const deleteFile = async (document_id, user_id) => {
-    try {
-        // Check if user owns the file
-        const fileCheck = await query(
-            "SELECT * FROM documents WHERE document_id = $1 AND user_id = $2",
-            [document_id, user_id]
-        );
+export const deleteFile = async (document_id) => {
+  try {
+    const fileCheck = await query(
+      "SELECT * FROM documents WHERE document_id = $1",
+      [document_id]
+    );
 
-        if (fileCheck.rowCount === 0) {
-            throw new Error('File not found or unauthorized');
-        }
-
-        // Delete from Spaces
-        const deleteParams = {
-            Bucket: process.env.SPACE_NAME,
-            Key: document_id
-        };
-
-        await s3Client.send(new DeleteObjectCommand(deleteParams));
-
-        // Update database
-        await query(
-            "UPDATE documents SET status = 'deleted', deleted_at = NOW() WHERE document_id = $1",
-            [document_id]
-        );
-
-        return true;
-    } catch (error) {
-        console.error('Delete error:', error);
-        throw error;
+    if (fileCheck.rowCount === 0) {
+      throw new Error('File not found');
     }
+
+    const deleteParams = {
+      Bucket: process.env.SPACES_NAME,
+      Key: document_id
+    };
+
+    await s3Client.send(new DeleteObjectCommand(deleteParams));
+
+    await query(
+      "DELETE FROM documents WHERE document_id = $1",
+      [document_id]
+    );
+
+    return true;
+  } catch (error) {
+    console.error('Delete error:', error);
+    throw error;
+  }
 };
+
 
 /**
  * Get signed URL for file download
@@ -213,33 +195,32 @@ export const deleteFile = async (document_id, user_id) => {
  * @returns {Promise<string>} Signed URL
  */
 export const getFileUrl = async (document_id, user_id) => {
-    try {
-        // Check if user has access to file
-        const fileCheck = await query(
-            "SELECT * FROM documents WHERE document_id = $1 AND user_id = $2",
-            [document_id, user_id]
-        );
+  try {
+    const fileCheck = await query(
+      "SELECT * FROM documents WHERE document_id = $1 AND user_id = $2",
+      [document_id, user_id]
+    );
 
-        if (fileCheck.rowCount === 0) {
-            throw new Error('File not found or unauthorized');
-        }
-
-        const params = {
-            Bucket: process.env.SPACE_NAME,
-            Key: document_id
-        };
-
-        const signedUrl = await getSignedUrl(
-            s3Client,
-            new GetObjectCommand(params),
-            { expiresIn: SPACES_CONFIG.SIGNED_URL_EXPIRES }
-        );
-
-        return signedUrl;
-    } catch (error) {
-        console.error('Get URL error:', error);
-        throw error;
+    if (fileCheck.rowCount === 0) {
+      throw new Error('File not found or unauthorized');
     }
+
+    const params = {
+      Bucket: process.env.SPACES_NAME,
+      Key: document_id
+    };
+
+    const signedUrl = await getSignedUrl(
+      s3Client,
+      new GetObjectCommand(params),
+      { expiresIn: SPACES_CONFIG.SIGNED_URL_EXPIRES }
+    );
+
+    return signedUrl;
+  } catch (error) {
+    console.error('Get URL error:', error);
+    throw error;
+  }
 };
 
 /**
@@ -249,38 +230,39 @@ export const getFileUrl = async (document_id, user_id) => {
  * @returns {Promise<Object>} List of files
  */
 export const listUserFiles = async (user_id, options = { page: 1, limit: 10 }) => {
-    try {
-        const offset = (options.page - 1) * options.limit;
+  try {
+    const offset = (options.page - 1) * options.limit;
 
-        const result = await query(
-            `SELECT * FROM documents
-            WHERE user_id = $1 AND status = 'active'
-            ORDER BY created_at DESC
-            LIMIT $2 OFFSET $3`,
-            [user_id, options.limit, offset]
-        );
+    const result = await query(
+      `SELECT * FROM documents
+      WHERE user_id = $1
+      ORDER BY created_at DESC
+      LIMIT $2 OFFSET $3`,
+      [user_id, options.limit, offset]
+    );
 
-        const countResult = await query(
-            "SELECT COUNT(*) FROM documents WHERE user_id = $1 AND status = 'active'",
-            [user_id]
-        );
 
-        const totalFiles = parseInt(countResult.rows[0].count);
-        const totalPages = Math.ceil(totalFiles / options.limit);
+    const countResult = await query(
+      "SELECT COUNT(*) FROM documents WHERE user_id = $1",
+      [user_id]
+    );
 
-        return {
-            files: result.rows,
-            pagination: {
-                currentPage: options.page,
-                totalPages,
-                totalFiles,
-                hasMore: options.page < totalPages
-            }
-        };
-    } catch (error) {
-        console.error('List files error:', error);
-        throw error;
-    }
+    const totalFiles = parseInt(countResult.rows[0].count);
+    const totalPages = Math.ceil(totalFiles / options.limit);
+
+    return {
+      files: result.rows,
+      pagination: {
+        currentPage: options.page,
+        totalPages,
+        totalFiles,
+        hasMore: options.page < totalPages
+      }
+    };
+  } catch (error) {
+    console.error('List files error:', error);
+    throw error;
+  }
 };
 
 /**
@@ -288,47 +270,44 @@ export const listUserFiles = async (user_id, options = { page: 1, limit: 10 }) =
  * @returns {Promise<void>}
  */
 export const cleanupOldFiles = async () => {
-    try {
-        const retentionDate = new Date();
-        retentionDate.setDate(retentionDate.getDate() - SPACES_CONFIG.FILE_RETENTION_DAYS);
+  try {
+    const retentionDate = new Date();
+    retentionDate.setDate(retentionDate.getDate() - SPACES_CONFIG.FILE_RETENTION_DAYS);
 
-        const oldFiles = await query(
-            `SELECT document_id FROM documents
-            WHERE created_at < $1
-            AND status = 'active'`,
-            [retentionDate]
+    const oldFiles = await query(
+      `SELECT document_id FROM documents
+      WHERE created_at < $1`,
+      [retentionDate]
+    );
+
+    for (const file of oldFiles.rows) {
+      try {
+        await s3Client.send(new DeleteObjectCommand({
+          Bucket: process.env.SPACES_NAME,
+          Key: file.document_id
+        }));
+
+        await query(
+          `DELETE FROM documents
+           WHERE document_id = $1`,
+          [file.document_id]
         );
-
-        for (const file of oldFiles.rows) {
-            try {
-                await s3Client.send(new DeleteObjectCommand({
-                    Bucket: process.env.SPACE_NAME,
-                    Key: file.document_id
-                }));
-
-                await query(
-                    `UPDATE documents
-                    SET status = 'archived',
-                        archived_at = NOW()
-                    WHERE document_id = $1`,
-                    [file.document_id]
-                );
-            } catch (error) {
-                console.error(`Error cleaning up file ${file.document_id}:`, error);
-            }
-        }
-
-        console.log(`Cleaned up ${oldFiles.rows.length} old files`);
-    } catch (error) {
-        console.error('Cleanup error:', error);
-        throw error;
+      } catch (error) {
+        console.error(`Error cleaning up file ${file.document_id}:`, error);
+      }
     }
+
+    console.log(`Cleaned up ${oldFiles.rows.length} old files`);
+  } catch (error) {
+    console.error('Cleanup error:', error);
+    throw error;
+  }
 };
 
 export default {
-    uploadFile,
-    deleteFile,
-    getFileUrl,
-    listUserFiles,
-    cleanupOldFiles
+  uploadFile,
+  deleteFile,
+  getFileUrl,
+  listUserFiles,
+  cleanupOldFiles
 };

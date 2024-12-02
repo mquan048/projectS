@@ -1,11 +1,12 @@
 -- Create Documents table
 CREATE TABLE documents (
   id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL,
   document_id VARCHAR(255) UNIQUE NOT NULL,
   name VARCHAR(255) NOT NULL,
   file_type VARCHAR(10) NOT NULL CHECK (file_type IN ('pdf', 'doc', 'docx')),
+  file_size NUMERIC(10, 2) NOT NULL,
   number_of_pages INTEGER NOT NULL CHECK (number_of_pages >= 1),
-  user_id INT NOT NULL,
   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
@@ -92,7 +93,7 @@ CREATE TABLE users (
   email VARCHAR(255) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
   full_name VARCHAR(255) NOT NULL,
-  date_of_birth DATE NOT NULL,
+  date_of_birth DATE,
   available_a4_pages INTEGER DEFAULT 0,
   last_modified TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
@@ -116,6 +117,8 @@ ALTER TABLE feedbacks ADD CONSTRAINT fk_user_feedback FOREIGN KEY (user_id) REFE
 
 ALTER TABLE notifications ADD CONSTRAINT fk_user_notification FOREIGN KEY (user_id) REFERENCES users (id);
 
+ALTER TABLE documents ADD CONSTRAINT fk_user_document FOREIGN KEY (user_id) REFERENCES users (id);
+
 ALTER TABLE page_orders ADD CONSTRAINT fk_user_page_order FOREIGN KEY (user_id) REFERENCES users (id);
 
 ALTER TABLE print_orders ADD CONSTRAINT fk_user_print_order FOREIGN KEY (user_id) REFERENCES users (id);
@@ -123,5 +126,3 @@ ALTER TABLE print_orders ADD CONSTRAINT fk_user_print_order FOREIGN KEY (user_id
 ALTER TABLE print_orders ADD CONSTRAINT fk_document_print_order FOREIGN KEY (document_id) REFERENCES documents (id);
 
 ALTER TABLE print_orders ADD CONSTRAINT fk_printer_print_order FOREIGN KEY (printer_id) REFERENCES printers (printer_id);
-
-ALTER TABLE documents ADD CONSTRAINT fk_user_document FOREIGN KEY (user_id) REFERENCES users (id);
