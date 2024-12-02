@@ -81,3 +81,15 @@ export const deleteUser = async (id) => {
         throw error;
     }
 }
+
+export const allocatePageForAllUsers = async (num_of_pages) => {
+    try {
+        const result = await query(
+            'UPDATE users SET available_a4_pages = available_a4_pages + $1', 
+            [num_of_pages]
+        )
+        return result;
+    } catch {
+        throw error;
+    }
+}
