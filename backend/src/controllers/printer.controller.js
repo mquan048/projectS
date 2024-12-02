@@ -34,7 +34,16 @@ export const getPrinter = async (req, res) => {
 
 export const changeState = async (req, res) => {
     try {
-        await printerService.changeState(req.params.id, req.body.state);
+        const result = await printerService.changeState(req.params.id, req.body.state);
+        if (result) {
+            return res.status(200).json({
+                message: 'Update successfully!'
+            })
+        } else {
+            return res.status(404).json({
+                message: 'Not found!'
+            })
+        }
     } catch (error) {
         console.error(error);
         return res.status(500);
@@ -43,7 +52,16 @@ export const changeState = async (req, res) => {
 
 export const updateInfo = async (req, res) => {
     try {
-        await printerService.updateInfo(req.params.id, req.body);
+        const result = await printerService.updateInfo(req.params.id, req.body);
+        if (result) {
+            return res.status(200).json({
+                message: 'Update successfully!'
+            })
+        } else {
+            return res.status(404).json({
+                message: 'Not found!'
+            })
+        }
     } catch (error) {
         console.error(error);
         return res.status(500);

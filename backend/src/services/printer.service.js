@@ -18,7 +18,7 @@ export const changeState = async (id, state) => {
             'UPDATE printers SET state = $1 WHERE printer_id = $2', 
             [state, id]
         );
-        return result;
+        return result.rowCount !== 0;
     } catch (error) {
         throw error;
     }
@@ -48,7 +48,7 @@ export const updateInfo = async (id, {name, brand, model, campus, room, building
             'UPDATE printers SET name = $1, brand = $2, model = $3, campus = $4, room = $5, building = $6 WHERE printer_id = $7',
             [name, brand, model, campus, room, building, id]
         );
-        return result;
+        return result.rowCount !== 0;
     } catch (error) {
         throw error
     }
