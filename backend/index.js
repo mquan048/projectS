@@ -1,6 +1,6 @@
 import express from 'express';
 import route from './src/routes/index.js';
-// import route from './src/routes/index.route.js';
+
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import cors from 'cors';
@@ -18,6 +18,23 @@ const options = {
   customCss: '.swagger-ui .topbar { display: none }',
   customSiteTitle: "API Documentation"
 };
+
+const corsOptions = {
+  origin: ['http://localhost:5173', 'http://localhost:3000'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'x-access-token',
+      'Origin',
+      'Accept'
+  ],
+  exposedHeaders: ['Authorization'],
+  credentials: true,
+  maxAge: 86400
+};
+
+app.use(cors(corsOptions));
 
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
