@@ -119,10 +119,10 @@ export const filter = async ({ full_name = '', begin_at = undefined, end_at = un
 export const calcPages = (pageOfDocument, { sided, paper_size, pages_per_sheet, number_of_copies }) => {
   let pageNeedToPrint = pageOfDocument;
   if (sided === 'two-sided')
-    pageNeedToPrint /= 2;
+    pageNeedToPrint = Math.ceil(pageNeedToPrint / 2);
   if (paper_size === 'A3')
     pageNeedToPrint *= 2;
-  pageNeedToPrint /= pages_per_sheet;
+  pageNeedToPrint = Math.ceil(pageNeedToPrint / pages_per_sheet);
   pageNeedToPrint *= number_of_copies;
   return pageNeedToPrint;
 }
