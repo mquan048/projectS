@@ -42,17 +42,31 @@ export const getPrintOrdersByUserid = async (id, page = 1, status) => {
   try {
     const limit = 10;
     const offset = (Number(page) - 1) * limit;
-    const result = await query(
-      `SELECT d.name, po.start_time, po.number_of_copies, p.campus, p.building, p.room, d.number_of_pages, po.p_state
-            FROM print_orders po
-            JOIN documents d ON po.document_id = d.id
-            JOIN printers p ON po.printer_id = p.printer_id
-            WHERE po.user_id = $1 ${status ? 'AND po.p_state = $2' : ''}
-            ORDER BY po.created_at DESC
-            LIMIT 10 OFFSET $3`,
-      [id, status, offset]
-    );
-    return result.rows;
+    if(status) {
+      const result = await query(
+        `SELECT d.name, po.start_time, po.number_of_copies, p.campus, p.building, p.room, d.number_of_pages, po.p_state
+              FROM print_orders po
+              JOIN documents d ON po.document_id = d.id
+              JOIN printers p ON po.printer_id = p.printer_id
+              WHERE po.user_id = $1 AND po.p_state = $2
+              ORDER BY po.created_at DESC
+              LIMIT 10 OFFSET $3`,
+        [id, status, offset]
+      );
+      return result.rows;
+    } else {
+      const result = await query(
+        `SELECT d.name, po.start_time, po.number_of_copies, p.campus, p.building, p.room, d.number_of_pages, po.p_state
+              FROM print_orders po
+              JOIN documents d ON po.document_id = d.id
+              JOIN printers p ON po.printer_id = p.printer_id
+              WHERE po.user_id = $1
+              ORDER BY po.created_at DESC
+              LIMIT 10 OFFSET $2`,
+        [id, offset]
+      );
+      return result.rows;
+    }
   } catch (error) {
     throw error;
   }
