@@ -65,6 +65,16 @@ const compressFileIfNeeded = async (fileBuffer, mimeType) => {
   }
 };
 
+//  Sanitize filename for metadata
+const sanitizeMetadataValue = (filename) => {
+
+    return filename
+        .replace(/[^a-zA-Z0-9.-]/g, '-')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
+};
+
 /**
  * Upload file to Digital Ocean Spaces
  * @param {Object} file - File object from multer
@@ -95,7 +105,7 @@ export const uploadFile = async (file, user_id) => {
       ContentType: file.mimetype,
       ACL: 'private',
       Metadata: {
-        'original-name': file.originalname,
+        'original-name': sanitizeMetadataValue(file.originalname),
         'upload-date': new Date().toISOString(),
         'user-id': user_id.toString(),
         'file-size': file.size.toString()
