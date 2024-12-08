@@ -20,3 +20,11 @@ export default function Logout() {
     </button>
   );
 }
+
+export const logout = (navigate) => {
+  // Clear all items from localStorage
+  localStorage.clear();
+
+  // Navigate to the home page (or any other page you want)
+  navigate("/");
+};

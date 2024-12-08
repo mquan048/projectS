@@ -5,62 +5,60 @@ import axios from "axios";
 
 const Printer = () => {
   const [printers, setPrinters] = useState([]);
-  const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'ascending' });
+  const [sortConfig, setSortConfig] = useState({
+    key: "name",
+    direction: "ascending",
+  });
   const [showModal, setShowModal] = useState(false);
   const [editingPrinter, setEditingPrinter] = useState(null);
   const [newPrinter, setNewPrinter] = useState({
     name: "",
     brand: "",
-    model: "",  
+    model: "",
     campus: "",
     building: "",
     room: "",
   });
- useEffect( () =>
- {
-  fetchPrinter();
- }
-  
- ,[]);
- const fetchPrinter = async () => {
-  try{
-    const response = await axios.get("http://localhost:5000/api/printer");
-    setPrinters(response.data);
-    console.log(response)
-     }
-  catch(error){
-    console.error("Error fetching printers:", error);
-  }
-}
-
-const addPrinter = async (newprinter) =>
-{
-  try{
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-      console.error("Access token not found!");
-      return;
+  useEffect(() => {
+    fetchPrinter();
+  }, []);
+  const fetchPrinter = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/printer");
+      setPrinters(response.data);
+      console.log(response);
+    } catch (error) {
+      console.error("Error fetching printers:", error);
     }
-    const response = await axios.post("http://localhost:5000/api/printer",newprinter,{
-      headers: {
-        Authorization: `Bearer ${token}`
+  };
+
+  const addPrinter = async (newprinter) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        console.error("Access token not found!");
+        return;
       }
-    });
-    console.log("Add printer into db success");
-     
-  }
-  catch(error){
-    console.error("Error adding printers:", error);
-  }
-}
+      const response = await axios.post(
+        "http://localhost:5000/api/printer",
+        newprinter,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Add printer into db success");
+    } catch (error) {
+      console.error("Error adding printers:", error);
+    }
+  };
   const handleInputChange = (e) => {
-    const {name,value} = e.target;
-    setNewPrinter((prev) => (
-      {
-        ...prev,
-        [name]: value,
-      }
-    ))
+    const { name, value } = e.target;
+    setNewPrinter((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleAddPrinter = async () => {
@@ -75,7 +73,7 @@ const addPrinter = async (newprinter) =>
       alert("Please fill all the fields.");
       return;
     }
-  
+
     try {
       await addPrinter(newPrinter); // Thêm máy in mới
       await fetchPrinter(); // Cập nhật danh sách máy in
@@ -93,7 +91,6 @@ const addPrinter = async (newprinter) =>
       alert("Failed to add printer. Please try again.");
     }
   };
-  
 
   const handleChangeStatus = async (printer_id) => {
     try {
@@ -107,7 +104,7 @@ const addPrinter = async (newprinter) =>
           ? "maintenance"
           : "active";
 
-      const token = localStorage.getItem("access_token");
+      const token = localStorage.getItem("accessToken");
       if (!token) {
         console.error("Access token not found!");
         return;
@@ -118,13 +115,13 @@ const addPrinter = async (newprinter) =>
         { state: newState },
         {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       console.log("After change state:");
       console.log(response);
-      
+
       // Cập nhật trạng thái trong state
       //  setPrinters((prevPrinters) =>
       //   prevPrinters.map((p) =>
@@ -141,7 +138,7 @@ const addPrinter = async (newprinter) =>
 
   const handleUpdatePrinter = async (id, updatedPrinter) => {
     try {
-      const token = localStorage.getItem("access_token");
+      const token = localStorage.getItem("accessToken");
       if (!token) {
         console.error("Access token not found!");
         return;
@@ -161,9 +158,9 @@ const addPrinter = async (newprinter) =>
       console.error("Error updating printer:", error);
       alert("Failed to update the printer. Please try again.");
     }
-  }
+  };
   const handleEditPrinter = (printer) => {
-    setEditingPrinter(printer); 
+    setEditingPrinter(printer);
     setShowModal(true);
   };
   const handleSaveEditPrinter = async () => {
@@ -176,10 +173,10 @@ const addPrinter = async (newprinter) =>
     let sortablePrinters = [...printers];
     sortablePrinters.sort((a, b) => {
       if (a[sortConfig.key] < b[sortConfig.key]) {
-        return sortConfig.direction === 'ascending' ? -1 : 1;
+        return sortConfig.direction === "ascending" ? -1 : 1;
       }
       if (a[sortConfig.key] > b[sortConfig.key]) {
-        return sortConfig.direction === 'ascending' ? 1 : -1;
+        return sortConfig.direction === "ascending" ? 1 : -1;
       }
       return 0;
     });
@@ -187,39 +184,44 @@ const addPrinter = async (newprinter) =>
   }, [printers, sortConfig]);
 
   const requestSort = (key) => {
-    let direction = 'ascending';
-    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
     }
     setSortConfig({ key, direction });
   };
   const getSortIndicator = (key) => {
     if (sortConfig.key === key) {
-      if (key === 'name') {
-        return sortConfig.direction === 'ascending' ? ' (A-Z)' : ' (Z-A)';
-      } else if (key === 'created_at') {
-        return sortConfig.direction === 'ascending' ? ' (Xa nhất)' : ' (Mới nhất)';
+      if (key === "name") {
+        return sortConfig.direction === "ascending" ? " (A-Z)" : " (Z-A)";
+      } else if (key === "created_at") {
+        return sortConfig.direction === "ascending"
+          ? " (Xa nhất)"
+          : " (Mới nhất)";
       }
     }
-    return '';
+    return "";
   };
-  
+
   return (
     <div className="container-printer-management">
       <div className="printer-management">
         <header className="header">
           <h1>Printer Management</h1>
           <div className="sort-toolbar">
-          <button onClick={() => requestSort('name')}>Sắp xếp theo Tên{getSortIndicator('name')}</button>
-          <button onClick={() => requestSort('created_at')}>Sắp xếp theo Ngày tạo{getSortIndicator('created_at')}</button>
-        </div>
+            <button onClick={() => requestSort("name")}>
+              Sắp xếp theo Tên{getSortIndicator("name")}
+            </button>
+            <button onClick={() => requestSort("created_at")}>
+              Sắp xếp theo Ngày tạo{getSortIndicator("created_at")}
+            </button>
+          </div>
           <div className="toolbar">
             <button className="add-button" onClick={() => setShowModal(true)}>
               + Add Printer
             </button>
           </div>
         </header>
-        
 
         <div className="printer-list">
           {sortedPrinters.map((printer) => (
@@ -230,23 +232,38 @@ const addPrinter = async (newprinter) =>
                 </div>
                 <div className="printer-title">
                   <h2>{printer.name}</h2>
-                  <p className={`status-badge ${printer.state}`}>{printer.state}</p>
+                  <p className={`status-badge ${printer.state}`}>
+                    {printer.state}
+                  </p>
                 </div>
               </div>
               <div className="printer-info">
                 <div className="info-group">
-                  <p><strong>Brand:</strong> {printer.brand}</p>
-                  <p><strong>Model:</strong> {printer.model}</p>
-                  <p><strong>Campus:</strong> {printer.campus}</p>
+                  <p>
+                    <strong>Brand:</strong> {printer.brand}
+                  </p>
+                  <p>
+                    <strong>Model:</strong> {printer.model}
+                  </p>
+                  <p>
+                    <strong>Campus:</strong> {printer.campus}
+                  </p>
                 </div>
                 <div className="info-group">
-                  <p><strong>Building:</strong> {printer.building}</p>
-                  <p><strong>Room:</strong> {printer.room}</p>
-                  <p><strong>Created At:</strong> {printer.created_at}</p>
+                  <p>
+                    <strong>Building:</strong> {printer.building}
+                  </p>
+                  <p>
+                    <strong>Room:</strong> {printer.room}
+                  </p>
+                  <p>
+                    <strong>Created At:</strong> {printer.created_at}
+                  </p>
                 </div>
                 <div className="info-group">
-                
-                  <p><strong>Updated At:</strong> {printer.updated_at}</p>
+                  <p>
+                    <strong>Updated At:</strong> {printer.updated_at}
+                  </p>
                 </div>
               </div>
               <div className="printer-footer">
@@ -346,88 +363,99 @@ const addPrinter = async (newprinter) =>
           </div>
         )}
 
-{showModal && editingPrinter && (
-  <div className="modal">
-    <div className="modal-content">
-      <h2>Edit Printer</h2>
-      <input
-        type="text"
-        name="name"
-        placeholder="Printer Name"
-        value={editingPrinter.name}
-        onChange={(e) =>
-          setEditingPrinter({ ...editingPrinter, name: e.target.value })
-        }
-        className="input-field"
-      />
-      <input
-        type="text"
-        name="brand"
-        placeholder="Brand"
-        value={editingPrinter.brand}
-        onChange={(e) =>
-          setEditingPrinter({ ...editingPrinter, brand: e.target.value })
-        }
-        className="input-field"
-      />
-      <input
-        type="text"
-        name="model"
-        placeholder="Model"
-        value={editingPrinter.model}
-        onChange={(e) =>
-          setEditingPrinter({ ...editingPrinter, model: e.target.value })
-        }
-        className="input-field"
-      />
-      <input
-        type="text"
-        name="campus"
-        placeholder="Campus"
-        value={editingPrinter.campus}
-        onChange={(e) =>
-          setEditingPrinter({ ...editingPrinter, campus: e.target.value })
-        }
-        className="input-field"
-      />
-      <input
-        type="text"
-        name="building"
-        placeholder="Building"
-        value={editingPrinter.building}
-        onChange={(e) =>
-          setEditingPrinter({ ...editingPrinter, building: e.target.value })
-        }
-        className="input-field"
-      />
-      <input
-        type="text"
-        name="room"
-        placeholder="Room"
-        value={editingPrinter.room}
-        onChange={(e) =>
-          setEditingPrinter({ ...editingPrinter, room: e.target.value })
-        }
-        className="input-field"
-      />
-      <div className="modal-actions">
-        <button className="save-button" onClick={handleSaveEditPrinter}>
-          Save
-        </button>
-        <button
-          className="cancel-button"
-          onClick={() => {
-            setShowModal(false);
-            setEditingPrinter(null);
-          }}
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
+        {showModal && editingPrinter && (
+          <div className="modal">
+            <div className="modal-content">
+              <h2>Edit Printer</h2>
+              <input
+                type="text"
+                name="name"
+                placeholder="Printer Name"
+                value={editingPrinter.name}
+                onChange={(e) =>
+                  setEditingPrinter({ ...editingPrinter, name: e.target.value })
+                }
+                className="input-field"
+              />
+              <input
+                type="text"
+                name="brand"
+                placeholder="Brand"
+                value={editingPrinter.brand}
+                onChange={(e) =>
+                  setEditingPrinter({
+                    ...editingPrinter,
+                    brand: e.target.value,
+                  })
+                }
+                className="input-field"
+              />
+              <input
+                type="text"
+                name="model"
+                placeholder="Model"
+                value={editingPrinter.model}
+                onChange={(e) =>
+                  setEditingPrinter({
+                    ...editingPrinter,
+                    model: e.target.value,
+                  })
+                }
+                className="input-field"
+              />
+              <input
+                type="text"
+                name="campus"
+                placeholder="Campus"
+                value={editingPrinter.campus}
+                onChange={(e) =>
+                  setEditingPrinter({
+                    ...editingPrinter,
+                    campus: e.target.value,
+                  })
+                }
+                className="input-field"
+              />
+              <input
+                type="text"
+                name="building"
+                placeholder="Building"
+                value={editingPrinter.building}
+                onChange={(e) =>
+                  setEditingPrinter({
+                    ...editingPrinter,
+                    building: e.target.value,
+                  })
+                }
+                className="input-field"
+              />
+              <input
+                type="text"
+                name="room"
+                placeholder="Room"
+                value={editingPrinter.room}
+                onChange={(e) =>
+                  setEditingPrinter({ ...editingPrinter, room: e.target.value })
+                }
+                className="input-field"
+              />
+              <div className="modal-actions">
+                <button className="save-button" onClick={handleSaveEditPrinter}>
+                  Save
+                </button>
+                <button
+                  className="cancel-button"
+                  onClick={() => {
+                    setShowModal(false);
+                    setEditingPrinter(null);
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

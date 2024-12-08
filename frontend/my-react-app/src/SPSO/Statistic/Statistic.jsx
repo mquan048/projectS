@@ -28,7 +28,20 @@ ChartJS.register(
 
 const Statistic = () => {
   const [monthlyData, setMonthlyData] = useState({
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    labels: [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ],
     datasets: [
       {
         label: "Monthly Prints",
@@ -58,12 +71,15 @@ const Statistic = () => {
   // Fetch data from API
   const fetchMonthlyData = async () => {
     try {
-      const accessToken = localStorage.getItem("access_token");
-      const response = await axios.get("http://localhost:5000/api/report/month", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const accessToken = localStorage.getItem("accessToken");
+      const response = await axios.get(
+        "http://localhost:5000/api/report/month",
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
 
       const data = response.data[0]; // Assuming the response is an array with the first object containing data
       const totalFor2024 = [
@@ -113,7 +129,10 @@ const Statistic = () => {
         ],
       }));
     } catch (err) {
-      console.error("Error fetching monthly data:", err.response?.data || err.message);
+      console.error(
+        "Error fetching monthly data:",
+        err.response?.data || err.message
+      );
     }
   };
 

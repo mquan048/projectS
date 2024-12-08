@@ -96,7 +96,7 @@ function Nav_SPSO() {
   useEffect(() => {
     const fetchFullName = async () => {
       try {
-        const accessToken = localStorage.getItem("access_token");
+        const accessToken = localStorage.getItem("accessToken");
         const response = await axios.get("http://localhost:5000/api/spso", {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
@@ -104,7 +104,10 @@ function Nav_SPSO() {
         const { full_name } = response.data;
         setFullName(full_name);
       } catch (error) {
-        console.error("Error fetching full name:", error.response?.data || error.message);
+        console.error(
+          "Error fetching full name:",
+          error.response?.data || error.message
+        );
       }
     };
 

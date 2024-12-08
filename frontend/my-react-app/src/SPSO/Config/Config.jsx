@@ -8,7 +8,7 @@ const Config = () => {
   const [defaultPages, setDefaultPages] = useState("");
   const [history, setHistory] = useState([]);
 
-  const handleAllocate = async() => {
+  const handleAllocate = async () => {
     if (!defaultPages) {
       toast.error("Please select pages", {
         position: "top-right",
@@ -26,22 +26,20 @@ const Config = () => {
       num_of_pages: defaultPages,
     };
     try {
-      const accessToken = localStorage.getItem("access_token");
+      const accessToken = localStorage.getItem("accessToken");
       const response = await axios.put(
         "http://localhost:5000/api/spso/allocate-pages",
         newEntry,
         {
           headers: {
-            Authorization: `Bearer ${accessToken}`}
+            Authorization: `Bearer ${accessToken}`,
+          },
         }
-      )
+      );
       console.log("Success allocate pages");
-    }
-    catch(err) {
+    } catch (err) {
       console.error("Error:", err.response?.data || err.message);
     }
-   
-    
 
     toast.success("Pages allocated successfully!", {
       position: "top-right",
@@ -53,7 +51,7 @@ const Config = () => {
       progress: undefined,
     });
   };
-    
+
   return (
     <div className="container-printer-management">
       <div className="config-container">
@@ -64,7 +62,9 @@ const Config = () => {
           </div>
           <div className="header-title">
             <h1>Page Allocation Configuration</h1>
-            <p>Manage page allocations efficiently with user-friendly settings.</p>
+            <p>
+              Manage page allocations efficiently with user-friendly settings.
+            </p>
           </div>
         </div>
 
@@ -83,13 +83,10 @@ const Config = () => {
             />
           </div>
 
-
           <button className="config-allocate-button" onClick={handleAllocate}>
             Allocate Pages
           </button>
         </div>
-
-        
       </div>
       <ToastContainer />
     </div>

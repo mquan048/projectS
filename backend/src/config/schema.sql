@@ -123,6 +123,6 @@ ALTER TABLE page_orders ADD CONSTRAINT fk_user_page_order FOREIGN KEY (user_id) 
 
 ALTER TABLE print_orders ADD CONSTRAINT fk_user_print_order FOREIGN KEY (user_id) REFERENCES users (id);
 
-ALTER TABLE print_orders ADD CONSTRAINT fk_document_print_order FOREIGN KEY (document_id) REFERENCES documents (id);
+ALTER TABLE print_orders ADD CONSTRAINT fk_document_print_order FOREIGN KEY (document_id) REFERENCES documents (id) ON DELETE CASCADE;
 
 ALTER TABLE print_orders ADD CONSTRAINT fk_printer_print_order FOREIGN KEY (printer_id) REFERENCES printers (printer_id);
