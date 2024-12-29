@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The HCMUT Smart Printing Service System - SSPS is a web application that allows users to submit print requests online and track the status of their orders. The system is developed based on the MERN stack.
+The HCMUT Smart Printing Service System - SSPS is a web application that allows users to submit print requests online and track the status of their orders. The system is developed based on the PERN stack.
 
 ## Features
 
@@ -22,7 +22,7 @@ The HCMUT Smart Printing Service System - SSPS is a web application that allows 
 
 ## Technologies Used
 
--   **MongoDB**: A NoSQL database to store user and order information
+-   **PostgreSQL**: A SQL database to store user and order information
 -   **Express.js**: A Node.js framework for building APIs
 -   **React.js**: A JavaScript library for building user interfaces
 -   **Node.js**: A server-side JavaScript runtime environment
@@ -32,6 +32,6 @@ The HCMUT Smart Printing Service System - SSPS is a web application that allows 
 ### Requirements
 
 -   Node.js
--   MongoDB
+-   PostgreSQL
 
 ### Installation Guide
