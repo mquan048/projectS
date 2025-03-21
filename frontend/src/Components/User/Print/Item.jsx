@@ -1,116 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MdDeleteForever } from "react-icons/md";
 import { FaPrint } from "react-icons/fa6";
 import { BiShow } from "react-icons/bi";
 import axios from "axios";
 import { showFail, showSucess } from "../Alert/Aleart";
 
-const printerFake = [
-  {
-    printer_id: 1,
-    name: "Super",
-    brand: "HP",
-    model: "SP123",
-    campus: "CS1",
-    building: "H6",
-    room: 612,
-    img: "https://www.midshire.co.uk/wp-content/uploads/2017/03/Ricoh-Multifunction-Printer.jpg",
-  },
-  {
-    printer_id: 2,
-    name: "LaserJet",
-    brand: "HP",
-    model: "LJ900",
-    campus: "CS2",
-    building: "B5",
-    room: 102,
-    img: "https://www.midshire.co.uk/wp-content/uploads/2017/03/Ricoh-Multifunction-Printer.jpg",
-  },
-  {
-    printer_id: 3,
-    name: "OfficePro",
-    brand: "Canon",
-    model: "OP5000",
-    campus: "CS3",
-    building: "A1",
-    room: 210,
-    img: "https://www.midshire.co.uk/wp-content/uploads/2017/03/Ricoh-Multifunction-Printer.jpg",
-  },
-  {
-    printer_id: 4,
-    name: "PrintMaster",
-    brand: "Brother",
-    model: "PM450",
-    campus: "CS1",
-    building: "H7",
-    room: 315,
-    img: "https://www.midshire.co.uk/wp-content/uploads/2017/03/Ricoh-Multifunction-Printer.jpg",
-  },
-  {
-    printer_id: 5,
-    name: "EcoPrint",
-    brand: "Epson",
-    model: "EPX900",
-    campus: "CS2",
-    building: "C3",
-    room: 405,
-    img: "https://www.midshire.co.uk/wp-content/uploads/2017/03/Ricoh-Multifunction-Printer.jpg",
-  },
-  {
-    printer_id: 6,
-    name: "QuickPrint",
-    brand: "Lexmark",
-    model: "QPX300",
-    campus: "CS3",
-    building: "D9",
-    room: 122,
-    img: "https://www.midshire.co.uk/wp-content/uploads/2017/03/Ricoh-Multifunction-Printer.jpg",
-  },
-  {
-    printer_id: 7,
-    name: "MegaPrint",
-    brand: "Xerox",
-    model: "MP1000",
-    campus: "CS1",
-    building: "H3",
-    room: 510,
-    img: "https://www.midshire.co.uk/wp-content/uploads/2017/03/Ricoh-Multifunction-Printer.jpg",
-  },
-  {
-    printer_id: 8,
-    name: "PrintJet",
-    brand: "Samsung",
-    model: "PJ150",
-    campus: "CS2",
-    building: "F6",
-    room: 809,
-    img: "https://www.midshire.co.uk/wp-content/uploads/2017/03/Ricoh-Multifunction-Printer.jpg",
-  },
-  {
-    printer_id: 9,
-    name: "SpeedPrint",
-    brand: "Ricoh",
-    model: "SP2000",
-    campus: "CS3",
-    building: "E2",
-    room: 303,
-    img: "https://www.midshire.co.uk/wp-content/uploads/2017/03/Ricoh-Multifunction-Printer.jpg",
-  },
-  {
-    printer_id: 10,
-    name: "UltraPrint",
-    brand: "Kyocera",
-    model: "UP700",
-    campus: "CS1",
-    building: "B8",
-    room: 707,
-    img: "https://www.midshire.co.uk/wp-content/uploads/2017/03/Ricoh-Multifunction-Printer.jpg",
-  },
-];
+const printerImgTemplate = "https://www.midshire.co.uk/wp-content/uploads/2017/03/Ricoh-Multifunction-Printer.jpg";
 
 export default function Item(props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [printers, setPrinter] = useState(printerFake);
+  const [printers, setPrinter] = useState();
   const [formData, setFormData] = useState({
     document_id: props.item.document_id,
     sided: "two-sided",
@@ -122,6 +21,15 @@ export default function Item(props) {
     printer_id: 1,
     p_state: "printing",
   });
+
+  const getPrinter = async () => {
+    const reponse = await axios.get(`${import.meta.env.VITE_APP_URL_BACKEND}/api/printer`)
+    setPrinter(reponse.data)
+  }
+
+  useEffect(() => {
+    getPrinter()
+  }, [])
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -141,7 +49,7 @@ export default function Item(props) {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:5000/api/print-order", // API endpoint
+        `${import.meta.env.VITE_APP_URL_BACKEND}/api/print-order`, // API endpoint
         formData, // Data to be sent with the POST request
         {
           headers: {
@@ -182,7 +90,7 @@ export default function Item(props) {
 
     try {
       const response = await axios.get(
-        `http://127.0.0.1:5000/api/file/${props.item.document_id}/url`,
+        `${import.meta.env.VITE_APP_URL_BACKEND}/api/file/${props.item.document_id}/url`,
         {
           headers: {
             Authorization: `Bearer ${token}`, // Set Authorization header
@@ -366,8 +274,6 @@ export default function Item(props) {
                       name="printer_id"
                       value={formData.printer_id}
                       onChange={handleChange}
-                      min="1"
-                      max={printers.length}
                       className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                     />
                   </div>
@@ -399,11 +305,10 @@ export default function Item(props) {
                             {item.printer_id}
                           </h1>
                           <span>
-                            {item.campus}-{item.building}
-                            {item.room}
+                            {item.campus} - {item.room}
                           </span>
                           <img
-                            src={item.img}
+                            src={printerImgTemplate}
                             alt={item.name}
                             className="mt-2 rounded-md w-full h-20 object-cover"
                           />

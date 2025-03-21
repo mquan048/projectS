@@ -21,7 +21,7 @@ export default function BuyPage() {
 
       // Make POST request with Bearer token
       const response = await axios.post(
-        "http://127.0.0.1:5000/api/page-order",
+        `${import.meta.env.VITE_APP_URL_BACKEND}/api/page-order`,
         postData,
         {
           headers: {

@@ -156,7 +156,7 @@ import { showFail } from "../Components/User/Alert/Aleart";
 
 export default function Login() {
   const [formData, setFormData] = useState({
-    username: "",
+    email: "",
     password: "",
   });
 
@@ -171,12 +171,9 @@ export default function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission logic here
-
-    console.log(formData.username + " " + formData.password);
-
     axios
-      .post("http://127.0.0.1:5000/api/auth/signin", {
-        email: formData.username, // Assume username is email
+      .post(`${import.meta.env.VITE_APP_URL_BACKEND}/api/auth/signin`, {
+        email: formData.email, // Assume username is email
         password: formData.password,
       })
       .then((response) => {
@@ -195,7 +192,6 @@ export default function Login() {
         showFail("An error occurred. Please try again.");
       });
   };
-  console.log(role, isLoggedIn);
 
   if (isLoggedIn) {
     // Redirect based on role
@@ -224,15 +220,15 @@ export default function Login() {
               </p>
               <div className="mt-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2">
-                  UserName
+                  Email
                 </label>
                 <input
                   className="text-gray-700 border border-gray-300 rounded py-2 px-4 block w-full focus:outline-2 focus:outline-blue-700"
-                  id="username"
-                  name="username"
+                  id="email"
+                  name="email"
                   type="text"
-                  placeholder="Enter your username"
-                  value={formData.username}
+                  placeholder="Enter your email"
+                  value={formData.email}
                   onChange={handleChange}
                   required
                 />

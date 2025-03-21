@@ -28,7 +28,7 @@ const Config = () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
       const response = await axios.put(
-        "http://localhost:5000/api/spso/allocate-pages",
+        `${import.meta.env.VITE_APP_URL_BACKEND}/api/spso/allocate-pages`,
         newEntry,
         {
           headers: {

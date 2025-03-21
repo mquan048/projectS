@@ -26,19 +26,108 @@ export default function AppRoutes() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/admin" element={<Admin />}>
-          <Route path="info" element={<Info_SPSO />} />
-          <Route path="printer" element={<Printer />} />
-          <Route path="config" element={<Config />} />
-          <Route path="history" element={<History />} />
-          <Route index path="statistic" element={<Statistic />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute roleRequired="ADMIN">
+              {" "}
+              <Admin />{" "}
+            </ProtectedRoute>
+          }
+        >
+          <Route
+            path="info"
+            element={
+              <ProtectedRoute roleRequired="ADMIN">
+                {" "}
+                <Info_SPSO />{" "}
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="printer"
+            element={
+              <ProtectedRoute roleRequired="ADMIN">
+                {" "}
+                <Printer />{" "}
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="config"
+            element={
+              <ProtectedRoute roleRequired="ADMIN">
+                {" "}
+                <Config />{" "}
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="history"
+            element={
+              <ProtectedRoute roleRequired="ADMIN">
+                {" "}
+                <History />{" "}
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            index
+            path="statistic"
+            element={
+              <ProtectedRoute roleRequired="ADMIN">
+                {" "}
+                <Statistic />{" "}
+              </ProtectedRoute>
+            }
+          />
         </Route>
-        <Route path="/user" element={<User />}>
+        <Route
+          path="/user"
+          element={
+            <ProtectedRoute roleRequired="USER">
+              {" "}
+              <User />{" "}
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<IndexUser />} />
-          <Route path="infor" element={<InforUser />} />
-          <Route path="history" element={<HistoryUser />} />
-          <Route path="buypage" element={<BuyPage />} />
-          <Route path="print" element={<Print />} />
+          <Route
+            path="infor"
+            element={
+              <ProtectedRoute roleRequired="USER">
+                {" "}
+                <InforUser />{" "}
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="history"
+            element={
+              <ProtectedRoute roleRequired="USER">
+                {" "}
+                <HistoryUser />{" "}
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="buypage"
+            element={
+              <ProtectedRoute roleRequired="USER">
+                {" "}
+                <BuyPage />{" "}
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="print"
+            element={
+              <ProtectedRoute roleRequired="USER">
+                {" "}
+                <Print />{" "}
+              </ProtectedRoute>
+            }
+          />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

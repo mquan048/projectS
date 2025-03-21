@@ -19,7 +19,7 @@ export default function Infor() {
         const token = localStorage.getItem("accessToken");
 
         // Make the GET request with Bearer token
-        const response = await axios.get("http://127.0.0.1:5000/api/user", {
+        const response = await axios.get(`${import.meta.env.VITE_APP_URL_BACKEND}/api/user`, {
           headers: {
             Authorization: `Bearer ${token}`, // Include the Bearer token in the header
           },

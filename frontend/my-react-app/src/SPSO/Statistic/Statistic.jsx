@@ -73,7 +73,7 @@ const Statistic = () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
       const response = await axios.get(
-        "http://localhost:5000/api/report/month",
+        `${import.meta.env.VITE_APP_URL_BACKEND}/api/report/month`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

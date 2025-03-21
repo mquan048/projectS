@@ -6,38 +6,38 @@ import axios from "axios";
 import Item from "./Item";
 import { showFail, showSucess } from "../Alert/Aleart";
 
-const dataFake = [
-  {
-    document_id: "1ff4vKPiXbLKAmonatMi0mNqMd6MwFHdZ",
-    name: "BTL-script - Thực hiện quản lý DA linh hoạt.pdf",
-    file_type: "pdf",
-    number_of_pages: 5,
-    webViewLink:
-      "https://drive.google.com/file/d/1ff4vKPiXbLKAmonatMi0mNqMd6MwFHdZ/view?usp=drivesdk",
-    webContentLink:
-      "https://drive.google.com/uc?id=1ff4vKPiXbLKAmonatMi0mNqMd6MwFHdZ&export=download",
-  },
-  {
-    document_id: "1iCPieT0M3xLqVzLKjVTpxHKbJ_5lD355",
-    name: "Báo Cáo BTL_final - Thực hiện quản lý DA linh hoạt.pdf",
-    file_type: "pdf",
-    number_of_pages: 13,
-    webViewLink:
-      "https://drive.google.com/file/d/1iCPieT0M3xLqVzLKjVTpxHKbJ_5lD355/view?usp=drivesdk",
-    webContentLink:
-      "https://drive.google.com/uc?id=1iCPieT0M3xLqVzLKjVTpxHKbJ_5lD355&export=download",
-  },
-  {
-    document_id: "1gd_wWTuQnnNTPr02WYHyALQ7JIo17oLG",
-    name: "Rectangle 20.pdf",
-    file_type: "pdf",
-    number_of_pages: 1,
-    webViewLink:
-      "https://drive.google.com/file/d/1gd_wWTuQnnNTPr02WYHyALQ7JIo17oLG/view?usp=drivesdk",
-    webContentLink:
-      "https://drive.google.com/uc?id=1gd_wWTuQnnNTPr02WYHyALQ7JIo17oLG&export=download",
-  },
-];
+// const dataFake = [
+//   {
+//     document_id: "1ff4vKPiXbLKAmonatMi0mNqMd6MwFHdZ",
+//     name: "BTL-script - Thực hiện quản lý DA linh hoạt.pdf",
+//     file_type: "pdf",
+//     number_of_pages: 5,
+//     webViewLink:
+//       "https://drive.google.com/file/d/1ff4vKPiXbLKAmonatMi0mNqMd6MwFHdZ/view?usp=drivesdk",
+//     webContentLink:
+//       "https://drive.google.com/uc?id=1ff4vKPiXbLKAmonatMi0mNqMd6MwFHdZ&export=download",
+//   },
+//   {
+//     document_id: "1iCPieT0M3xLqVzLKjVTpxHKbJ_5lD355",
+//     name: "Báo Cáo BTL_final - Thực hiện quản lý DA linh hoạt.pdf",
+//     file_type: "pdf",
+//     number_of_pages: 13,
+//     webViewLink:
+//       "https://drive.google.com/file/d/1iCPieT0M3xLqVzLKjVTpxHKbJ_5lD355/view?usp=drivesdk",
+//     webContentLink:
+//       "https://drive.google.com/uc?id=1iCPieT0M3xLqVzLKjVTpxHKbJ_5lD355&export=download",
+//   },
+//   {
+//     document_id: "1gd_wWTuQnnNTPr02WYHyALQ7JIo17oLG",
+//     name: "Rectangle 20.pdf",
+//     file_type: "pdf",
+//     number_of_pages: 1,
+//     webViewLink:
+//       "https://drive.google.com/file/d/1gd_wWTuQnnNTPr02WYHyALQ7JIo17oLG/view?usp=drivesdk",
+//     webContentLink:
+//       "https://drive.google.com/uc?id=1gd_wWTuQnnNTPr02WYHyALQ7JIo17oLG&export=download",
+//   },
+// ];
 
 export default function Printer() {
   const [toggle, setToggle] = useState(false);
@@ -57,7 +57,7 @@ export default function Printer() {
     }
 
     try {
-      const response = await axios.get("http://127.0.0.1:5000/api/document", {
+      const response = await axios.get(`${import.meta.env.VITE_APP_URL_BACKEND}/api/document`, {
         headers: {
           Authorization: `Bearer ${token}`, // Set Authorization header
         },
@@ -68,7 +68,7 @@ export default function Printer() {
       setData(response.data); // Store data in the state
     } catch (err) {
       console.error("Error fetching data:", err);
-      setError(err.response ? err.response.data : "An error occurred");
+      showFail(err.response ? err.response.data : "An error occurred");
     }
   };
 
@@ -87,7 +87,7 @@ export default function Printer() {
 
     try {
       const response = await axios.delete(
-        `http://127.0.0.1:5000/api/file/${id}`,
+        `${import.meta.env.VITE_APP_URL_BACKEND}/api/file/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`, // Include Bearer token in Authorization header
@@ -149,7 +149,7 @@ export default function Printer() {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:5000/api/file", // URL API
+        `${import.meta.env.VITE_APP_URL_BACKEND}/api/file`, // URL API
         formData, // Dữ liệu FormData
         {
           headers: {

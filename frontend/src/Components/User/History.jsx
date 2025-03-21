@@ -49,7 +49,7 @@ export default function History() {
 
       try {
         const response = await axios.get(
-          "http://127.0.0.1:5000/api/print-order",
+          `${import.meta.env.VITE_APP_URL_BACKEND}/api/print-order`,
           {
             headers: {
               Authorization: `Bearer ${token}`, // Gửi Bearer token trong header
